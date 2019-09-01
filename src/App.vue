@@ -1,28 +1,44 @@
-<template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+<template lang="html">
+  <div class="">
+    <h1> Scottish Football Reddit Threads</h1>
+    <div>
+      <threads-list :threads='threads'></threads-list>
+      <thread-detail v-if="selectedThread" :thread="selectedThread"></thread-detail>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import ThreadsList from './components/ThreadsList.vue';
+import ThreadDetail from './components/ThreadDetail.vue';
+import{eventBus} from './main.js';
 
 export default {
   name: 'app',
+  data(){
+    return {
+      threads: [],
+      selectedThread: null
+    };
+  },
+  mounted(){
+    fetch('https://www.reddit.com/r/ScottishFootball.json')
+    .then(res => res.json())
+    .then(data => this.threads = data.data.children)
+
+
+  eventBus.$on('thread-selected', (thread) =>{
+    this.selectedThread = thread;
+    })
+  },
   components: {
-    HelloWorld
+    "threads-list": ThreadsList ,
+    "thread-detail": ThreadDetail
   }
+
 }
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="css" scoped>
+
 </style>
